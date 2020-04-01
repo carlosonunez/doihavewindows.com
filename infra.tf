@@ -60,13 +60,13 @@ resource "aws_s3_bucket_object" "website" {
   source       = "./${each.key}"
   etag         = filemd5("./${each.key}")
   acl          = "public-read"
-  content_type = each.key == "website.html" ? "text/html" : "application/pdf"
+  content_type = each.key == "index.html" ? "text/html" : "image/x-icon"
 }
 
 resource "aws_route53_record" "website" {
   depends_on = [aws_s3_bucket_object.website]
   zone_id    = aws_route53_zone.zone.id
-  name       = "@"
+  name       = "doihavewindows.com"
   type       = "A"
   alias {
     name                   = aws_cloudfront_distribution.website.domain_name
