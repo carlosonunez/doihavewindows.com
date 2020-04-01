@@ -3,29 +3,29 @@ terraform {
 }
 
 provider "aws" {
-  alias = "acm"
+  alias  = "acm"
   region = "us-east-1"
 }
 
 resource "aws_route53_zone" "zone" {
-  name = "doihavewindows.com."
+  name    = "doihavewindows.com."
   comment = "https://github.com/carlosonunez/doihavewindows.com"
 }
 
 resource "random_string" "bucket" {
-  length = 8
-  upper = false
+  length  = 8
+  upper   = false
   special = false
 }
 
 resource "aws_s3_bucket" "website" {
   bucket = "${random_string.bucket.result}-website-bucket-for-doihavewindows.com"
-  acl = "private"
+  acl    = "private"
 }
 
 resource "aws_acm_certificate" "cert" {
-  provider = aws.acm
-  domain_name = "doihavewindows.com"
+  provider          = aws.acm
+  domain_name       = "doihavewindows.com"
   validation_method = "DNS"
   lifecycle {
     create_before_destroy = true
@@ -34,16 +34,16 @@ resource "aws_acm_certificate" "cert" {
 
 resource "aws_route53_record" "cert_validation" {
   provider = aws.acm
-  name    = "${aws_acm_certificate.cert.domain_validation_options.0.resource_record_name}"
-  type    = "${aws_acm_certificate.cert.domain_validation_options.0.resource_record_type}"
-  zone_id = "${aws_route53_zone.zone.id}"
-  records = ["${aws_acm_certificate.cert.domain_validation_options.0.resource_record_value}"]
-  ttl     = 60
+  name     = "${aws_acm_certificate.cert.domain_validation_options.0.resource_record_name}"
+  type     = "${aws_acm_certificate.cert.domain_validation_options.0.resource_record_type}"
+  zone_id  = "${aws_route53_zone.zone.id}"
+  records  = ["${aws_acm_certificate.cert.domain_validation_options.0.resource_record_value}"]
+  ttl      = 60
 }
 
 
 resource "aws_acm_certificate_validation" "cert" {
-  provider = aws.acm
+  provider                = aws.acm
   certificate_arn         = "${aws_acm_certificate.cert.arn}"
   validation_record_fqdns = ["${aws_route53_record.cert_validation.fqdn}"]
 }
@@ -52,27 +52,35 @@ resource "aws_cloudfront_origin_access_identity" "default" {}
 
 resource "aws_s3_bucket_object" "website" {
   for_each = {
-    "index.html" = "index.html" 
+    "index.html"  = "index.html"
     "favicon.ico" = "favicon.ico"
   }
-  bucket = aws_s3_bucket.website.id
-  key = each.value
-  source = "./${each.key}"
-  etag = filemd5("./${each.key}")
-  acl = "public-read"
+  bucket       = aws_s3_bucket.website.id
+  key          = each.value
+  source       = "./${each.key}"
+  etag         = filemd5("./${each.key}")
+  acl          = "public-read"
   content_type = each.key == "website.html" ? "text/html" : "application/pdf"
 }
 
 resource "aws_route53_record" "website" {
-  depends_on = [ aws_s3_bucket_object.website ]
-  zone_id = aws_route53_zone.zone.id
-  name = "website"
-  type = "A"
+  depends_on = [aws_s3_bucket_object.website]
+  zone_id    = aws_route53_zone.zone.id
+  name       = "@"
+  type       = "A"
   alias {
-    name = aws_cloudfront_distribution.website.domain_name
-    zone_id = aws_cloudfront_distribution.website.hosted_zone_id
+    name                   = aws_cloudfront_distribution.website.domain_name
+    zone_id                = aws_cloudfront_distribution.website.hosted_zone_id
     evaluate_target_health = true
   }
+}
+
+resource "aws_route53_record" "website_alias" {
+  depends_on = [aws_s3_bucket_object.website]
+  zone_id    = aws_route53_zone.zone.id
+  name       = "www"
+  type       = "CNAME"
+  records    = ["doihavewindows.com"]
 }
 
 resource "aws_cloudfront_distribution" "website" {
@@ -88,7 +96,7 @@ resource "aws_cloudfront_distribution" "website" {
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
-  aliases = ["doihavewindows.com"]
+  aliases             = ["doihavewindows.com"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -119,8 +127,8 @@ resource "aws_cloudfront_distribution" "website" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = aws_acm_certificate.cert.arn
+    acm_certificate_arn      = aws_acm_certificate.cert.arn
     minimum_protocol_version = "TLSv1"
-    ssl_support_method = "sni-only"
+    ssl_support_method       = "sni-only"
   }
 }
