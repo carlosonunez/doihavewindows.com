@@ -1,6 +1,5 @@
 *.log
 *.swo
 *.swp
-output/
 .terraform
-env.yaml
+.env
