@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+BUCKET="${BUCKET?Please provide the key to the Terraform state bucket.}"
+AWS_REGION="${AWS_REGION?Please provide an AWS region.}"
+AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID?Please provide an AWS access key.}"
+AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY?Please provide an AWS secret key.}"
+create_resume() {
+  docker-compose run --rm resume-make
+}
+
+deploy_to_aws() {
+  docker-compose run --rm apply
+}
+
+create_resume && deploy_to_aws
