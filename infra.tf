@@ -80,6 +80,7 @@ resource "aws_route53_record" "website_alias" {
   zone_id    = aws_route53_zone.zone.id
   name       = "www"
   type       = "CNAME"
+  ttl        = 1
   records    = ["doihavewindows.com"]
 }
 
