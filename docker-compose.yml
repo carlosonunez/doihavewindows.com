@@ -1,0 +1,30 @@
+version: '2.2'
+services:
+  website:
+    image: nginx:alpine
+    volumes:
+      - $PWD:/website
+      - $PWD/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+  terraform:
+    image: hashicorp/terraform:0.12.18
+    environment:
+      - BUCKET
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - TF_CLI_ARGS_plan="-input=false"
+      - TF_CLI_ARGS_apply="-auto-approve"
+    volumes:
+      - $PWD:/app
+    working_dir: /app
+    entrypoint: 
+      - sh
+      - ./scripts/execute_terraform.sh
+  plan:
+    extends: terraform
+    command: plan
+  apply:
+    extends: terraform
+    command: apply
