@@ -1,0 +1,141 @@
+<html>
+<head>
+  <title>Do I Have Windows?</title>
+  <script data-ad-client="ca-pub-1180949890321525" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <meta name="description" content="Do you have Windows? Click here to find out." />
+  <meta name="keywords" content="windows,linux,mac,chromebook" />
+  <meta property="og:title" content="Do I have Windows?" />
+  <meta property="og:type" content="website" />
+  <meta property="og:description" content="Do you have Windows? Find out." />
+  <meta property="og:url" content="http://doihavewindows.com" />
+  <meta property="og:image" content="http://doihavewindows.com/favicon.ico" />
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-161181706-1"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-161181706-1');
+  </script>
+  <script>
+    function updatePage(os) {
+      $("#year").html(new Date().getFullYear() + ". " + $("#year").text());
+      if (os == 'Windows') {
+        $("#answer").html('<h1 class="yes">Yes.</h1>')
+      }
+      else {
+        $("#answer").html("<h1 class=\"no\">No.</h1>\
+<h2>You're probably using <span class=\"os\">" + os + "</span>.</h2>")
+      }
+    }
+    function getOS() {
+      var userAgent = window.navigator.userAgent,
+          platform = window.navigator.platform,
+          macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+          windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+          iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+          os = null;
+
+      if (macosPlatforms.indexOf(platform) !== -1) {
+        os = 'a Mac';
+      } else if (iosPlatforms.indexOf(platform) !== -1) {
+        os = 'an iPhone or iPad';
+      } else if (windowsPlatforms.indexOf(platform) !== -1) {
+        os = 'Windows';
+      } else if (/Android/.test(userAgent)) {
+        os = 'an Android phone';
+      } else if (!os && /Linux/.test(platform)) {
+        os = 'Linux';
+      }
+      else {
+        os = 'something else.'
+      }
+      return os;
+    }
+    $(document).ready(function () {
+      updatePage(getOS())
+    })
+  </script>
+  <style>
+body {
+  height: 100%;
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.content {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+}
+
+.footer {
+  flex-shrink: 1;
+  padding-bottom: 10px;
+}
+
+.yes {
+  color: green;
+}
+
+.no {
+  color: red;
+}
+
+.os {
+  color: #0066ff;
+}
+
+#year {
+  font-weight: bold;
+}
+
+@media all and (max-device-width : 800px) and (orientation : portrait) {
+  h1 {
+    font-size: 48px;
+  }
+  
+  h2 {
+    font-size: 36px;
+  }
+  
+  .footer {
+    font-size: 14px;
+  }
+}
+
+@media all and (min-device-width : 800px) {
+  h1 {
+    font-size: 64px;
+  }
+
+  h2 {
+    font-size: 52px;
+  }
+
+  .footer {
+    font-size: 20px;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="content">
+      <center><div id="answer"></div></center>
+    </div>
+    <div class="footer">
+      <span id="year"></span> Made by Carlos and Anna in DFW.
+    </div>
+  </div>
+</body>
