@@ -36,26 +36,40 @@
     function getOS() {
       var userAgent = window.navigator.userAgent,
           platform = window.navigator.platform,
-          macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
-          windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
-          iosPlatforms = ['iPhone', 'iPad', 'iPod'],
-          os = null;
-
-      if (macosPlatforms.indexOf(platform) !== -1) {
-        os = 'a Mac';
-      } else if (iosPlatforms.indexOf(platform) !== -1) {
-        os = 'an iPhone or iPad';
-      } else if (windowsPlatforms.indexOf(platform) !== -1) {
-        os = 'Windows';
-      } else if (/Android/.test(userAgent)) {
-        os = 'an Android phone';
-      } else if (!os && /Linux/.test(platform)) {
-        os = 'Linux';
+          supportedPlatforms = [
+            { "osString": "a Mac", "platforms": ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'] },
+            { "osString": "Windows", "platforms": ['Win32', 'Win64', 'Windows', 'WinCE'] },
+            { "osString": "an iPhone", "platforms": ['iPhone', 'iPod'] },
+            { "osString": "an iPad", "platforms": ['iPad'] },
+            { "osString": "a Blackberry (I'm impressed)", "platforms": ['Blackberry'] },
+            { "osString": "FreeBSD", "platforms": ['FreeBSD', 'FreeBSD i386', 'FreeBSD amd64'] },
+            { "osString": "playing Zelda", "platforms": ["New Nintendo 3DS","Nintendo DSi","Nintendo 3DS","Nintendo Wii","Nintendo WiiU"] },
+            { "osString": "OpenBSD", "platforms": ['OpenBSD amd64'] },
+            { "osString": "a super hip Nokia", "platforms": ['Nokia Series 40', 'S60', 'Symbian', 'Symbian OS'] },
+            { "osString": "a Palm (but why?)", "platforms": ['PalmOS', 'webOS'] },
+            { "osString": "Solaris", "platforms": ['SunOS'] },
+            { "osString": "a PlayStation", "platforms": ['PLAYSTATION 3', 'PlayStation 4', 'PSP'] },
+            { "osString": "a HP-UX", "platforms": ['HP-UX'] },
+            { "osString": "holding onto the 2010s with a TouchPad", "platforms": ['WebTV OS'] },
+            { "osString": "scraping my site? (X11)", "platforms": ['X11'] },
+          ]
+      
+      if (/Android/.test(userAgent)) {
+        return "Android";
       }
-      else {
-        os = 'something else.'
+      else if (/Linux/.test(platform)) {
+        return "Linux";
       }
-      return os;
+      else if (/CrOS/.test(platform)) {
+        return "a Chromebook";
+      }
+      for (idx = 0; idx < supportedPlatforms.length; idx++) {
+        osData = supportedPlatforms[idx];
+        if (osData["platforms"].indexOf(platform) !== -1) {
+          return osData["osString"];
+        }
+      }
+      return "something else"
     }
     $(document).ready(function () {
       updatePage(getOS())
